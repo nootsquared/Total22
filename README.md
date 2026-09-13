@@ -1,43 +1,62 @@
-# Golazo Arcade
+# Total 22
 
-Arcade 11v11 pixel soccer. Couch multiplayer, per-player AI brains, online
-rooms with four-letter codes.
+Arcade football made for playing with people in the room.
 
-## Run it
+Pick up a keyboard or controller, take control of a player, and play 11v11 matches where every other player has their own AI brain. Build a squad, call a room code, or just kick off.
+
+## Run locally
 
 ```sh
 pnpm install
-pnpm dev          # http://localhost:5173 — the relay rides the dev server
-pnpm test         # headless sim + protocol tests
+pnpm dev
 ```
 
-Online play on a LAN: the host runs `pnpm dev`, friends open
-`http://<host-ip>:5173/`, everyone meets at the room code.
+Open [http://localhost:5173](http://localhost:5173).
 
-## Going global (Cloudflare)
+For a LAN game, run the server on one computer and have everyone open:
 
-The whole game — static files and the `/mp` room relay — ships as one
-Cloudflare Worker with a Durable Object per room (`server/worker.mjs`,
-`wrangler.jsonc`). The free plan covers it.
+```text
+http://<host-ip>:5173
+```
 
-One-time setup:
+Then join the same four-letter room code.
 
-1. Create a free Cloudflare account at https://dash.cloudflare.com/sign-up.
-2. `pnpm exec wrangler login` — opens the browser, click Allow.
+## Modes
 
-Deploy (first time and every update):
+- **Quick Match** — set the teams and kick off.
+- **Draft Mode** — build an XI from the player market.
+- **Gamble Mode** — roll for your squad and work with what you get.
+- **Training Ground** — learn the controls with the pitch to yourself.
+- **Online Play** — host or join a room with friends.
+
+## Controls
+
+| Action | Keyboard | Controller |
+| --- | --- | --- |
+| Move | `WASD` | Left stick |
+| Sprint | `Shift` | `LT` |
+| Kick | Hold and release `Space` | Pull and release `RT` |
+| Switch player | `E` | `A` |
+| Feint / tackle | `K` | `B` |
+| Croqueta / slide | `J` | `X` |
+| Rainbow / barge | `L` | `Y` |
+| Controls card | `C` | Select |
+
+Kicks reward timing. Hold too long and the shot fizzles. Slides from behind are fouls. Skill moves depend on positioning, not random button-mashing.
+
+## Development
+
+```sh
+pnpm test
+pnpm build
+```
+
+## Deploy online
+
+Total 22 can deploy as a Cloudflare Worker with a room relay:
 
 ```sh
 pnpm cf:deploy
 ```
 
-Wrangler prints the public URL, e.g. `https://golazo-arcade.<you>.workers.dev`.
-Send that link to anyone on the planet: one of you hosts, the other joins with
-the room code. The host's browser tab runs the match; the Durable Object only
-relays, so it holds no game state and rooms die with their host.
-
-`pnpm cf:dev` runs the same Worker locally on :8788; point the protocol tests
-at it with `RELAY_WS=ws://127.0.0.1:8788 pnpm test`.
-
-Non-interactive deploys (CI): set `CLOUDFLARE_API_TOKEN` (dash → My Profile →
-API Tokens → "Edit Cloudflare Workers" template) instead of `wrangler login`.
+Send the deployed link to friends, make a room, and play.
